@@ -12,5 +12,7 @@ class Header(Enum):
 
 
 class MimeType(Enum):
+    FORM = 'multipart/form-data'
+    JSON = 'application/json'
     HTML = 'text/html'
     PLAIN = 'text/plain'

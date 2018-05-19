@@ -1,3 +1,4 @@
+import traceback
 from .http import Header, MimeType, StatusCode
 from .request import Request
 
@@ -15,22 +16,23 @@ def application(environ, start_response):
     try:
         request = Request.parse(environ)
         if request.path not in _routes:
-            return _handle_error(request, start_response,
+            return _handle_error(start_response,
                                  StatusCode.NOT_FOUND.value)
         return _handle_route(request, start_response)
     except Exception as exc:
-        return _handle_error(request, start_response,
+        traceback.print_exc()
+        return _handle_error(start_response,
                              StatusCode.SERVER_ERROR.value, str(exc))
 
 
 def _handle_route(request, start_response):
-    headers = [(Header.CONTENT_TYPE.value, MimeType.HTML.value)]
     response = _routes[request.path](request)
-    start_response(StatusCode.OK.value, headers)
-    return [_to_bytestr(response)]
+    headers = [(Header.CONTENT_TYPE.value, response.content_type)]
+    start_response(response.status_code, headers)
+    return [_to_bytestr(response.body)]
 
 
-def _handle_error(request, start_response, status_code, message=''):
+def _handle_error(start_response, status_code, message=''):
     headers = [(Header.CONTENT_TYPE.value, MimeType.PLAIN.value)]
     start_response(status_code, headers)
     return [_to_bytestr(message)]
