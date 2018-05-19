@@ -14,7 +14,7 @@ Write your app:
 ```python
 from wee import application, respond, route
 
-@route('/hi)
+@route('/hi')
 def index(request):
     return respond('Hi there!')
 
