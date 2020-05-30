@@ -23,10 +23,7 @@ def index(request):
 @wee.route('/hello')
 def hello(request):
     name = request.args.get('name')
-    if name:
-        body = f'Hello, {name}!'
-    else:
-        body = f'Hello, my anonymous friend!'
+    body = f'Hello, {name}!' if name else f'Hello, my anonymous friend!'
     return wee.respond(_render_html(body))
 
 
